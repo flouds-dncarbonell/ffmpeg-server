@@ -1,0 +1,60 @@
+version: "3.7"
+
+services:
+
+  ffmpeg-api:
+    image: dncarbonell/ffmpeg-api:v0.01
+
+    volumes:
+      - audio_uploads:/app/uploads
+      - audio_temp:/app/temp
+
+    networks:
+      - FloudsNet
+
+    environment:
+      - NODE_ENV=production
+      - PORT=8765
+
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8765/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: "1.0"         # Limita a 1 núcleo lógico
+          memory: 2048M       # 2 GB de RAM no máximo
+        reservations:
+          cpus: "0.25"        # Reserva 25% de 1 CPU
+          memory: 512M        # Reserva 512 MB
+
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.ffmpeg_api.rule=Host(`ffmpeg.flouds.com.br`)
+        - traefik.http.routers.ffmpeg_api.entrypoints=websecure
+        - traefik.http.routers.ffmpeg_api.tls.certresolver=letsencryptresolver
+        - traefik.http.services.ffmpeg_api.loadbalancer.server.port=8765
+        - traefik.http.services.ffmpeg_api.loadbalancer.passHostHeader=true
+        - traefik.http.routers.ffmpeg_api.service=ffmpeg_api
+
+volumes:
+  audio_uploads:
+    external: true
+    name: audio_uploads
+  audio_temp:
+    external: true
+    name: audio_temp
+
+networks:
+  FloudsNet:
+    external: true
+    name: FloudsNet

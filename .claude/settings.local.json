@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "Bash(docker push:*)",
+      "Bash(docker build:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }
