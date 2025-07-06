@@ -7,7 +7,10 @@
       "Bash(docker push:*)",
       "Bash(docker build:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git tag:*)",
+      "Bash(chmod:*)",
+      "Bash(./deploy.sh:*)"
     ],
     "deny": []
   }
