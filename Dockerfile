@@ -10,8 +10,9 @@ RUN npm install
 
 COPY . .
 
-RUN mkdir -p uploads temp public
+RUN mkdir -p uploads temp public && \
+    chmod 755 uploads temp public
 
-EXPOSE 3000
+EXPOSE 8765
 
 CMD ["npm", "start"]

@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   audio-converter:
-    image: dncarbonell/ffmpeg-api:v0.1.1
+    image: dncarbonell/ffmpeg-api:v0.1.4
     ports:
       - "8765:8765"
     volumes:

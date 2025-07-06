@@ -1,6 +1,6 @@
 # Sistema de Versionamento
 
-## Versão Atual: v0.1.1
+## Versão Atual: v0.1.4
 
 ### Convenção de Versionamento (Semantic Versioning)
 
@@ -12,6 +12,9 @@
 
 | Versão | Tipo | Descrição | Data |
 |--------|------|-----------|------|
+| v0.1.4 | PATCH | Melhorias gerais e atualização de versão | 2025-07-06 |
+| v0.1.3 | MINOR | Adicionado endpoint /convert-url, suporte a filename customizado, limpeza automática 24h | 2025-07-06 |
+| v0.1.2 | PATCH | Corrigido problema de diretório de saída do ffmpeg | 2025-07-06 |
 | v0.1.1 | PATCH | Aumentado limite de upload para 500MB | 2025-07-06 |
 | v0.1.0 | MINOR | Adicionado endpoint /convert-base64 para conversão de áudio base64 | 2025-07-06 |
 | v0.01  | INITIAL | Versão inicial com conversão de arquivos por upload | - |
@@ -20,15 +23,15 @@
 
 ```bash
 # 1. Atualizar versão no arquivo VERSION
-echo "0.1.1" > VERSION
+echo "0.1.4" > VERSION
 
 # 2. Build da imagem Docker
-docker build -t dncarbonell/ffmpeg-api:v0.1.1 .
-docker build -t dncarbonell/ffmpeg-api:v0.1.1-homolog .
+docker build -t dncarbonell/ffmpeg-api:v0.1.4 .
+docker build -t dncarbonell/ffmpeg-api:v0.1.4-homolog .
 
 # 3. Push para registry
-docker push dncarbonell/ffmpeg-api:v0.1.1
-docker push dncarbonell/ffmpeg-api:v0.1.1-homolog
+docker push dncarbonell/ffmpeg-api:v0.1.4
+docker push dncarbonell/ffmpeg-api:v0.1.4-homolog
 
 # 4. Atualizar docker-compose.yml com nova versão
 # 5. Deploy em homologação primeiro, depois produção
@@ -36,5 +39,6 @@ docker push dncarbonell/ffmpeg-api:v0.1.1-homolog
 
 ### Próximas Versões Planejadas
 
-- v0.1.2: Correções e melhorias no endpoint base64
-- v0.2.0: Novas funcionalidades de conversão
+- v0.1.5: Próximas correções e melhorias
+- v0.2.0: Autenticação e rate limiting
+- v0.3.0: Interface web para upload

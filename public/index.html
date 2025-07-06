@@ -60,6 +60,7 @@
             <li><code>audio</code> (file, obrigatório): Arquivo de áudio a ser convertido</li>
             <li><code>format</code> (string, opcional): Formato de saída (padrão: mp3)</li>
             <li><code>quality</code> (string, opcional): Qualidade do áudio (padrão: 128k)</li>
+            <li><code>filename</code> (string, opcional): Nome do arquivo de saída (sem extensão)</li>
         </ul>
         <p><strong>Exemplo usando curl:</strong></p>
         <pre>curl -X POST -F "audio=@arquivo.wav" -F "format=mp3" -F "quality=192k" http://localhost:8765/convert</pre>
@@ -85,6 +86,7 @@
             <li><code>mimeType</code> (string, obrigatório): Tipo MIME do áudio original (ex: audio/wav)</li>
             <li><code>outputFormat</code> (string, opcional): Formato de saída (padrão: mp3)</li>
             <li><code>quality</code> (string, opcional): Qualidade do áudio (padrão: 128k)</li>
+            <li><code>filename</code> (string, opcional): Nome do arquivo de saída (sem extensão)</li>
         </ul>
         <p><strong>Exemplo usando curl:</strong></p>
         <pre>curl -X POST -H "Content-Type: application/json" \
@@ -96,6 +98,29 @@
   }' \
   http://localhost:8765/convert-base64 \
   --output audio.mp3</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3><span class="method post">POST</span> /convert-url</h3>
+        <p><strong>Descrição:</strong> Converte um arquivo de áudio baixado de uma URL</p>
+        <p><strong>Content-Type:</strong> application/json</p>
+        <p><strong>Parâmetros:</strong></p>
+        <ul>
+            <li><code>url</code> (string, obrigatório): URL do arquivo de áudio para download</li>
+            <li><code>outputFormat</code> (string, opcional): Formato de saída (padrão: mp3)</li>
+            <li><code>quality</code> (string, opcional): Qualidade do áudio (padrão: 128k)</li>
+            <li><code>filename</code> (string, opcional): Nome do arquivo de saída (sem extensão)</li>
+        </ul>
+        <p><strong>Exemplo usando curl:</strong></p>
+        <pre>curl -X POST -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://example.com/audio.wav",
+    "outputFormat": "mp3",
+    "quality": "192k",
+    "filename": "meu_audio"
+  }' \
+  http://localhost:8765/convert-url \
+  --output meu_audio.mp3</pre>
     </div>
 
     <div class="endpoint">
@@ -128,14 +153,35 @@
         <li>320k - Qualidade máxima</li>
     </ul>
 
-    <h2>Exemplo de Uso</h2>
-    <p>Para converter um arquivo WAV para MP3 com qualidade 192k:</p>
+    <h2>Recursos Adicionais</h2>
+    <ul>
+        <li><strong>Nomenclatura personalizada:</strong> Use o parâmetro <code>filename</code> para definir o nome do arquivo de saída</li>
+        <li><strong>Geração automática de nomes:</strong> Se não especificar um nome, será gerado automaticamente</li>
+        <li><strong>Limpeza automática:</strong> Arquivos são removidos automaticamente após 24 horas</li>
+        <li><strong>Múltiplas formas de entrada:</strong> Upload direto, base64 ou URL</li>
+    </ul>
+
+    <h2>Exemplos de Uso</h2>
+    
+    <h3>Upload de arquivo com nome personalizado:</h3>
     <pre>curl -X POST \
   -F "audio=@meu_arquivo.wav" \
   -F "format=mp3" \
   -F "quality=192k" \
+  -F "filename=audio_convertido" \
   http://localhost:8765/convert \
-  --output arquivo_convertido.mp3</pre>
+  --output audio_convertido.mp3</pre>
+
+    <h3>Conversão via URL:</h3>
+    <pre>curl -X POST -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://example.com/audio.wav",
+    "outputFormat": "mp3",
+    "quality": "192k",
+    "filename": "meu_audio"
+  }' \
+  http://localhost:8765/convert-url \
+  --output meu_audio.mp3</pre>
 
     <footer style="text-align: center; margin-top: 50px; color: #666;">
         <p>Audio Converter API - Powered by ffmpeg</p>

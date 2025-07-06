@@ -32,13 +32,13 @@ npm install
 
 ```bash
 # Build Docker image
-docker build -t dncarbonell/ffmpeg-api:v0.01 .
+docker build -t dncarbonell/ffmpeg-api:v0.1.4 .
 
 # Run with docker-compose
 docker-compose up -d
 
 # Push to registry
-docker push dncarbonell/ffmpeg-api:v0.01
+docker push dncarbonell/ffmpeg-api:v0.1.4
 ```
 
 ## Port Configuration
@@ -50,21 +50,41 @@ The application runs on port 8765 (configured to avoid conflicts with common app
 
 ## API Endpoints
 
-- `POST /convert`: Convert audio files (requires multipart/form-data with audio file, optional format and quality parameters)
-- `POST /convert-base64`: Convert base64 audio data (requires JSON with data, mimeType, optional outputFormat and quality parameters)
+- `POST /convert`: Convert audio files via upload (multipart/form-data with audio file, optional format, quality, filename)
+- `POST /convert-base64`: Convert base64 audio data (JSON with data, mimeType, optional outputFormat, quality, filename)
+- `POST /convert-url`: Convert audio from URL (JSON with url, optional outputFormat, quality, filename)
 - `GET /formats`: List supported formats and quality options
 - `GET /health`: Health check endpoint
 - `GET /`: API documentation page
+
+## New Features (v0.1.4)
+
+### Custom Filename Support
+All conversion endpoints now support an optional `filename` parameter:
+- If provided, the output file will use this name (without extension)
+- If not provided, a random cryptographic filename is generated
+- Files can be overwritten as the API is not intended for permanent storage
+
+### URL-based Conversion
+New endpoint `/convert-url` allows converting audio files directly from URLs:
+- Downloads the file from the provided URL
+- Converts to the specified format
+- Supports all same parameters as other endpoints
+
+### Enhanced File Management
+- **24-hour retention**: Files are automatically cleaned up after 24 hours instead of 5 seconds
+- **Automatic cleanup**: Background process runs every hour to remove old files
+- **Directory safety**: Ensures all required directories exist with proper permissions
 
 ## IMPORTANTE: Documentação
 **SEMPRE** atualizar a página de documentação (`public/index.html`) quando adicionar novos endpoints ou modificar existentes. A documentação é acessada via GET / e deve refletir todas as funcionalidades da API.
 
 ## File Processing Flow
 
-1. Files uploaded to `/uploads` directory via multer
+1. Files uploaded to `/uploads` directory via multer, base64 decoded, or downloaded from URL
 2. ffmpeg processes files with specified format and quality
-3. Converted files saved to `/temp` directory
-4. Files downloaded then automatically cleaned up (input immediately, output after 5 seconds)
+3. Converted files saved to `/temp` directory with custom or random filename
+4. Files downloaded, input files cleaned immediately, output files cleaned after 24 hours by background process
 
 ## Production Deployment
 
@@ -74,3 +94,21 @@ The `ref-docker-compose.txt` file contains the production Docker Compose configu
 - Health checks
 - Traefik labels for SSL termination and routing
 - External volumes and networks
+
+## Project References
+
+For complete project information, refer to these files:
+- **README.md**: Complete project documentation, features, and usage examples
+- **VERSIONING.md**: Version history and deployment commands
+- **ref-docker-compose.txt**: Production deployment configuration
+- **public/index.html**: Interactive API documentation (accessible via GET /)
+
+## Dependencies
+
+- **express**: Web framework
+- **multer**: File upload handling
+- **fluent-ffmpeg**: FFmpeg interface
+- **cors**: Cross-origin resource sharing
+- **fs-extra**: Enhanced file system operations
+- **axios**: HTTP client for URL downloads
+- **crypto**: Random filename generation (built-in Node.js module)

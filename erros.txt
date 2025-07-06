@@ -1,0 +1,118 @@
+{
+  "errorMessage": "The service was not able to process your request",
+  "errorDescription": "Conversion failed: ffmpeg exited with code 234: Error opening output file temp/0effb6e58e64deb3ee2a5012d905b2a7.mp3.\nError opening output files: Invalid argument\n",
+  "errorDetails": {
+    "rawErrorMessage": [
+      "500 - \"{\\\"error\\\":\\\"Conversion failed: ffmpeg exited with code 234: Error opening output file temp/0effb6e58e64deb3ee2a5012d905b2a7.mp3.\\\\nError opening output files: Invalid argument\\\\n\\\"}\""
+    ],
+    "httpCode": "500"
+  },
+  "n8nDetails": {
+    "nodeName": "HTTP Request1",
+    "nodeType": "n8n-nodes-base.httpRequest",
+    "nodeVersion": 4.2,
+    "itemIndex": 0,
+    "time": "06/07/2025, 12:45:47",
+    "n8nVersion": "1.100.1 (Self Hosted)",
+    "binaryDataMode": "default",
+    "stackTrace": [
+      "NodeApiError: The service was not able to process your request",
+      "    at ExecuteContext.execute (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-nodes-base@file+packages+nodes-base_@aws-sdk+credential-providers@3.808.0_asn1.js@5_1af219c3f47f2a1223ec4ccec249a974/node_modules/n8n-nodes-base/nodes/HttpRequest/V3/HttpRequestV3.node.ts:780:15)",
+      "    at processTicksAndRejections (node:internal/process/task_queues:105:5)",
+      "    at WorkflowExecute.runNode (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_openai@4.103.0_encoding@0.1.13_ws@8.17.1_zod@3.25.67_/node_modules/n8n-core/src/execution-engine/workflow-execute.ts:1193:9)",
+      "    at /usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_openai@4.103.0_encoding@0.1.13_ws@8.17.1_zod@3.25.67_/node_modules/n8n-core/src/execution-engine/workflow-execute.ts:1542:27",
+      "    at /usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_openai@4.103.0_encoding@0.1.13_ws@8.17.1_zod@3.25.67_/node_modules/n8n-core/src/execution-engine/workflow-execute.ts:2108:11"
+    ]
+  }
+}
+
+
+Possível solução:
+
+### 🧨 Problema provável:
+
+O erro diz:
+
+```
+Error opening output file temp/0effb6e58e64deb3ee2a5012d905b2a7.mp3
+```
+
+Mas no container, o diretório correto seria `/app/temp`, já que você mapeou assim:
+
+```yaml
+- audio_temp:/app/temp
+```
+
+Se no código ou na chamada FFmpeg você está usando `temp/arquivo.mp3` (ou relativo), o FFmpeg **provavelmente está tentando salvar no diretório de trabalho atual**, o que pode não ter permissão — **ou sequer existir**.
+
+---
+
+### ✅ O que fazer (e testar agora):
+
+#### 1. **Use caminho absoluto no FFmpeg**
+
+Ao invés de:
+
+```bash
+ffmpeg -i input.mp3 temp/output.mp3
+```
+
+Use:
+
+```bash
+ffmpeg -i input.mp3 /app/temp/output.mp3
+```
+
+---
+
+#### 2. **Verifique se o volume `audio_temp` realmente está montado**
+
+Entre no container e teste:
+
+```bash
+docker exec -it <nome-do-container> sh
+ls -la /app/temp
+```
+
+Se não existir ou estiver vazio sem permissão de escrita, aí está o problema.
+
+---
+
+#### 3. **Teste manualmente dentro do container:**
+
+```bash
+touch /app/temp/teste.txt
+```
+
+Se der erro, o volume `audio_temp` externo pode estar com permissões travadas no host.
+
+---
+
+### 🔧 Se for isso:
+
+No host (fora do container), force a correção de permissões:
+
+```bash
+sudo chown -R 1000:1000 /var/lib/docker/volumes/audio_temp/_data
+sudo chmod -R 777 /var/lib/docker/volumes/audio_temp/_data
+```
+
+Ajuste o caminho se você estiver usando um volume montado em outro lugar.
+
+---
+
+### 🧠 Alternativa extra de segurança:
+
+Se você quiser garantir que o FFmpeg sempre escreva no local certo, defina a variável de ambiente e use no app:
+
+```env
+OUTPUT_DIR=/app/temp
+```
+
+E no código:
+
+```js
+const outputPath = path.join(process.env.OUTPUT_DIR, `${filename}.mp3`);
+```
+
+---

@@ -3,7 +3,7 @@ version: "3.7"
 services:
 
   ffmpeg-api:
-    image: dncarbonell/ffmpeg-api:v0.1.1
+    image: dncarbonell/ffmpeg-api:v0.1.3
 
     volumes:
       - audio_uploads:/app/uploads
