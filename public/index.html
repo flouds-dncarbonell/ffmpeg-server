@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Converter API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .endpoint {
+            background: #f4f4f4;
+            border-left: 4px solid #333;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .method {
+            font-weight: bold;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+        .get { background: #4CAF50; }
+        .post { background: #2196F3; }
+        code {
+            background: #f9f9f9;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        pre {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎵 Audio Converter API</h1>
+        <p>Converta seus arquivos de áudio usando ffmpeg</p>
+    </div>
+
+    <div class="endpoint">
+        <h3><span class="method post">POST</span> /convert</h3>
+        <p><strong>Descrição:</strong> Converte um arquivo de áudio para outro formato</p>
+        <p><strong>Content-Type:</strong> multipart/form-data</p>
+        <p><strong>Parâmetros:</strong></p>
+        <ul>
+            <li><code>audio</code> (file, obrigatório): Arquivo de áudio a ser convertido</li>
+            <li><code>format</code> (string, opcional): Formato de saída (padrão: mp3)</li>
+            <li><code>quality</code> (string, opcional): Qualidade do áudio (padrão: 128k)</li>
+        </ul>
+        <p><strong>Exemplo usando curl:</strong></p>
+        <pre>curl -X POST -F "audio=@arquivo.wav" -F "format=mp3" -F "quality=192k" http://localhost:3000/convert</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3><span class="method get">GET</span> /formats</h3>
+        <p><strong>Descrição:</strong> Lista os formatos e qualidades suportados</p>
+        <p><strong>Resposta:</strong></p>
+        <pre>{
+  "supportedFormats": ["mp3", "wav", "flac", "ogg", "m4a", "aac"],
+  "qualities": ["64k", "128k", "192k", "256k", "320k"]
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3><span class="method get">GET</span> /health</h3>
+        <p><strong>Descrição:</strong> Verifica o status da API</p>
+        <p><strong>Resposta:</strong></p>
+        <pre>{
+  "status": "OK",
+  "timestamp": "2024-01-01T12:00:00.000Z"
+}</pre>
+    </div>
+
+    <div class="endpoint">
+        <h3><span class="method get">GET</span> /</h3>
+        <p><strong>Descrição:</strong> Esta página de documentação</p>
+    </div>
+
+    <h2>Formatos Suportados</h2>
+    <ul>
+        <li><strong>Entrada:</strong> MP3, WAV, FLAC, OGG, M4A</li>
+        <li><strong>Saída:</strong> MP3, WAV, FLAC, OGG, M4A, AAC</li>
+    </ul>
+
+    <h2>Qualidades Disponíveis</h2>
+    <ul>
+        <li>64k - Baixa qualidade</li>
+        <li>128k - Qualidade padrão</li>
+        <li>192k - Boa qualidade</li>
+        <li>256k - Alta qualidade</li>
+        <li>320k - Qualidade máxima</li>
+    </ul>
+
+    <h2>Exemplo de Uso</h2>
+    <p>Para converter um arquivo WAV para MP3 com qualidade 192k:</p>
+    <pre>curl -X POST \
+  -F "audio=@meu_arquivo.wav" \
+  -F "format=mp3" \
+  -F "quality=192k" \
+  http://localhost:3000/convert \
+  --output arquivo_convertido.mp3</pre>
+
+    <footer style="text-align: center; margin-top: 50px; color: #666;">
+        <p>Audio Converter API - Powered by ffmpeg</p>
+    </footer>
+</body>
+</html>
