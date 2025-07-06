@@ -11,8 +11,8 @@ const app = express();
 const PORT = process.env.PORT || 8765;
 
 // Define absolute paths for directories
-const uploadsDir = path.join(__dirname, 'uploads');
-const tempDir = path.join(__dirname, 'temp');
+const uploadsDir = '/app/uploads';
+const tempDir = '/app/temp';
 
 // Ensure required directories exist
 fs.ensureDirSync(uploadsDir);

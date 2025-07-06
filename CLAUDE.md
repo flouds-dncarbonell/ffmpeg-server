@@ -32,13 +32,13 @@ npm install
 
 ```bash
 # Build Docker image
-docker build -t dncarbonell/ffmpeg-api:v0.1.4 .
+docker build -t dncarbonell/ffmpeg-api:v0.1.5 .
 
 # Run with docker-compose
 docker-compose up -d
 
 # Push to registry
-docker push dncarbonell/ffmpeg-api:v0.1.4
+docker push dncarbonell/ffmpeg-api:v0.1.5
 ```
 
 ## Port Configuration
@@ -57,7 +57,7 @@ The application runs on port 8765 (configured to avoid conflicts with common app
 - `GET /health`: Health check endpoint
 - `GET /`: API documentation page
 
-## New Features (v0.1.4)
+## New Features (v0.1.5)
 
 ### Custom Filename Support
 All conversion endpoints now support an optional `filename` parameter:
